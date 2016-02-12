@@ -1,0 +1,132 @@
+.reveal .wrapper {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.reveal .wrapper .label {
+  top: 42px;
+  left: -43px;
+
+  transform: rotate(-45deg);
+
+  position: absolute;
+  padding: 2px 0;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+  font: 700 13px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  z-index: 9999;
+}
+
+.reveal .wrapper .label.before {
+  background-color: #a00;
+}
+
+.reveal .wrapper .label.after {
+  background-color: #090;
+}
+
+.reveal .label span {
+  color: #fff;
+  text-decoration: none;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.5);
+  text-align: center;
+
+  width: 200px;
+  line-height: 20px;
+
+  display: inline-block;
+  padding: 2px 0;
+
+  border-width: 1px 0;
+  border-style: dotted;
+  border-color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.reveal .chart {
+  margin: 10px 0;
+  overflow: hidden;
+  position: relative;
+}
+.reveal .box {
+  border: 2px solid #fff;
+  text-align: center;
+}
+.reveal .users-box {
+  float: left;
+  width: 150px;
+  height: 500px;
+  line-height: 500px;
+}
+.reveal .production-instances-box, .reveal .development-instance-box {
+  margin: 0 auto;
+  width: 200px;
+  font-size: 30px;
+}
+.reveal .production-instaces-box {
+  height: 300px;
+}
+.reveal .production-instance-box {
+  width: 180px;
+  height: 40px;
+  line-height: 40px;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.reveal .development-instance-box {
+  height: 120px;
+  line-height: 40px;
+  margin-top: 100px;
+}
+.reveal .production-db-box {
+  float: right;
+  width: 200px;
+  height: 500px;
+}
+.reveal .production-db-box div {
+  margin: 200px 0;
+}
+.reveal .client-box {
+  float: left;
+  width: 200px;
+  height: 500px;
+  line-height: 500px;
+}
+.reveal .server-box {
+  float: right;
+  width: 200px;
+  height: 500px;
+  line-height: 500px;
+}
+.reveal .app-servers-box {
+  float: left;
+  width: 200px;
+  height: 500px;
+  line-height: 500px;
+}
+.reveal .db-box {
+  float: right;
+  width: 200px;
+  height: 500px;
+  line-height: 500px;
+}
+.reveal .memcached-box {
+  width: 250px;
+  height: 400px;
+  line-height: 400px;
+  margin: 100px 0 0 400px;
+}
+.reveal .line {
+  position: absolute;
+  text-align: center;
+  border-bottom: 1px solid #fff;
+}
+.reveal table td {
+  border: none;
+}

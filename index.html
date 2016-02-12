@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Rails Performance Tips</title>
+
+		<meta name="description" content="Rails Performance Tips">
+		<meta name="author" content="Richard Huang">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<link rel="stylesheet" href="css/app.css">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1 style="font-size: 80px">Rails Performance Tips</h1>
+          <p><a href="http://huangzhimin.com">Richard Huang</a></p>
+          <p><a href="https://github.com/flyerhzm">@flyerhzm</a></p>
+				</section>
+
+				<section>
+					<h2>Where to start</h2>
+				</section>
+
+				<section>
+					<h3>80-90% of the end-user response time is spent on the frontend</h3>
+          <img src="/img/golden-top10.png"></img>
+          <p><a href="https://www.safaribooksonline.com/library/view/high-performance-web/9780596529307/">High Performance Web Sites by Steve Souders</a></p>
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				<section>
+          <h2>Frontend Performance Tips</h2>
+				</section>
+
+				<section>
+          <img src="/img/frontend-presentation.jpg">
+          <p><a href="https://vimeo.com/61342267">Keith and Mario’s Guide to Fast Websites <br/>From RubyConf Au 2013</a></p>
+				</section>
+
+				<section>
+					<h3>1. As less requests as possible</h3>
+				</section>
+
+				<section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+					<h3>Concatenate CSS & Javascript</h3>
+          <div class="chart">
+            <div class="client-box box">Browser</div>
+            <div class="server-box box">Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;">application.html</div>
+            <div class="line" style="top:70px;left:205px;width:550px;">a.css</div>
+            <div class="line" style="top:140px;left:205px;width:550px;">b.css</div>
+            <div class="line" style="top:210px;left:205px;width:550px;">c.css</div>
+            <div class="line" style="top:280px;left:205px;width:550px;">a.js</div>
+            <div class="line" style="top:350px;left:205px;width:550px;">b.js</div>
+            <div class="line" style="top:420px;left:205px;width:550px;">c.js</div>
+          </div>
+				</section>
+
+				<section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+					<h3>Concatenate CSS & JavaScript</h3>
+          <div class="chart">
+            <div class="client-box box">Browser</div>
+            <div class="server-box box">Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;">application.html</div>
+            <div class="line" style="top:140px;left:205px;width:550px;">application.css</div>
+            <div class="line" style="top:350px;left:205px;width:550px;">application.js</div>
+          </div>
+				</section>
+
+				<section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+					<h3>Use Css Sprite</h3>
+          <div class="chart">
+            <div class="client-box box">Browser</div>
+            <div class="server-box box">Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;">application.html</div>
+            <div class="line" style="top:100px;left:205px;width:550px;">a.jpg</div>
+            <div class="line" style="top:200px;left:205px;width:550px;">b.jpg</div>
+            <div class="line" style="top:300px;left:205px;width:550px;">c.jpg</div>
+          </div>
+				</section>
+
+				<section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+					<h3>Use Css Sprite</h3>
+          <div class="chart">
+            <div class="client-box box">Browser</div>
+            <div class="server-box box">Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;">application.html</div>
+            <div class="line" style="top:200px;left:205px;width:550px;">sprite.jpg</div>
+          </div>
+				</section>
+
+        <section>
+					<h3>2. As small payloads as possible</h3>
+        </section>
+
+				<section>
+					<h3>Minify and gzip</h3>
+          <div style="font-size: 28px">application.css (original) => application.css (minified) => application.css.gz</div>
+          <div style="font-size: 28px">application.js (original) => application.js (minified) => application.js.gz</div>
+				</section>
+
+				<section>
+					<h3>Compress Images</h3>
+				</section>
+
+				<section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+					<h3>Cookie-less Domains</h3>
+          <pre><code>
+Host:xinminlabs.com
+Referer:https://xinminlabs.com
+Cookie:rack.session=BAh7EUkiD3Nlc3Npb25faWQGOgZFVEkiRTJjMjI3NjEzYzQ3
+MTZlMmYzZDky%0AMTEzOThkZDdmZjIyYjNiODBlYWI3ZmExYzU1MjRhZjYwN2FhMTBiM
+GUwM2YG%0AOwBGSSIJY3NyZgY7AEZJIiUxYzlhMzhlZDBlM2VhNGJhNmFlZDM1MzFjYj
+Ri%0AZWYxOQY7AEZJIg10cmFja2luZwY7AEZ7B0kiFEhUVFBfVVNFUl9BR0VOVAY7%0A
+AFRJIi1mY2M3ZjA2OGU5N2Q5NzA2YTgwMDdmOTg3MjEwMjJjOThiMjdlYTIw%0ABjsAR
+kkiGUhUVFBfQUNDRVBUX0xBTkdVQUdFBjsAVEkiLWRiY2MyMTZiMTBj%0AM2I1MmJkNT
+g3ZTBjODIwNTZiMmIyYmE5YjJkNDYGOwBGSSIRYWNjZXNzX3Rv%0Aa2VuBjsAVEkidTA
+wRDI4MDAwMDAwZnJFUSFBUU1BUUgxcV9MY2JRbG0yRXh5%0Ad3pqdm1PVjNMZGhNQS5D
+SF8xaV94ZDM0X1c5czAwTDgzaHhJV0RaQTBWNW82%0AUFR1clE5cTdUWUtJOTZmUVBoS
+2NfUjE3eklsQXp3NHcGOwBUSSIKZW1haWwG%0AOwBUSSIcZmx5ZXJoem0rcHJvZEBnbW
+FpbC5jb20GOwBUSSILaWRfdXJsBjsA%0AVEkiSmh0dHBzOi8vbG9naW4uc2FsZXNmb3J
+jZS5jb20vaWQvMDBEMjgwMDAw%0AMDBmckVRRUFZLzAwNTI4MDAwMDAxZHlrNkFBQQY7
+AFRJIhFpbnN0YW5jZV91%0AcmwGOwBUSSIjaHR0cHM6Ly9saXRhLm15LnNhbGVzZm9yY
+2UuY29tBjsAVEki%0ADXVzZXJuYW1lBjsAVEkiHGZseWVyaHptK3Byb2RAZ21haWwuY2
+9tBjsAVEki%0ADmlzc3VlZF9hdAY7AFRJIhIxNDU0ODE2NTUxNzE3BjsAVEkiEWRpc3B
+sYXlf%0AbmFtZQY7AFRJIhJSaWNoYXJkIEh1YW5nBjsAVEkiEnJlZnJlc2hfdG9rZW4G
+%0AOwBUSSJcNUFlcDg2MVRTRVN2V2V1Z193R21UcEcucUlfdDNhbTBpd1JndjFr%0AVD
+gyRV8yYjRiQTBMeXFWMzFoVU9Odk1SSEJGMk15V0hzbnZtb2RMVFRYVndr%0AU01UBjs
+AVEkiF29yaWdpbmFsX2lzc3VlZF9hdAY7AEZAGw%3D%3D%0A--0e51b9ebf15a845e1f
+17b20c0cc947cf8d9b7f60
+          </code></pre>
+				</section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Cookie-less Domains</h3>
+          <pre><code>
+Host:assets.xinminlabs.com
+Referer:https://xinminlabs.com
+          </code></pre>
+        </section>
+
+        <section>
+					<h3>3. As fast resources as possible</h3>
+        </section>
+
+				<section>
+					<h3>Use CDN</h3>
+				</section>
+
+        <section>
+          <h3>4. Other</h3>
+        </section>
+
+        <section>
+          <h3>JavaScript at the Bottom</h3>
+        </section>
+
+        <section>
+          <h2>Backend Performance Tips</h2>
+        </section>
+
+        <section>
+          <img src="/img/speed-awareness-graphic.png"></img>
+          <a href="http://www.speedawarenessmonth.com/when-8020-becomes-2080/">http://www.speedawarenessmonth.com/when-8020-becomes-2080/</a>
+        </section>
+
+        <section>
+          <h2>How</h2>
+          <ul>
+            <li>Don't guess! Don't guess! Don't guess!</li>
+            <li>Find out the bottleneck</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Monitor</h3>
+          <ul>
+            <li>New Relic</li>
+            <li>Skylight</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Monitor</h3>
+          <img src="/img/newrelic_screenshot1.png"></img>
+        </section>
+
+        <section>
+          <h3>Monitor</h3>
+          <img src="/img/newrelic_screenshot2.png"></img>
+        </section>
+
+        <section>
+          <h3>Monitor</h3>
+          <img src="/img/newrelic_screenshot3.png"></img>
+        </section>
+
+        <section>
+          <h3>Reproduce</h3>
+          <ul>
+            <li>Simulate the environment (postgres, memcached, etc.)</li>
+            <li>Simulate the data</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Reproduce</h3>
+          <ul>
+            <li>New Relic (Developer Mode)</li>
+            <li>rack-mini-profiler</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Reproduce</h3>
+          <img src="/img/newrelic_developer_screenshot1.png"></img>
+        </section>
+
+        <section>
+          <h3>Reproduce</h3>
+          <img src="/img/newrelic_developer_screenshot2.png"></img>
+        </section>
+
+        <section>
+          <h3>Reproduce</h3>
+          <img src="/img/newrelic_developer_screenshot3.png"></img>
+        </section>
+
+        <section>
+          <h3>Reproduce</h3>
+          <img src="/img/newrelic_developer_screenshot4.png"></img>
+        </section>
+
+        <section>
+          <div class="chart">
+            <div class="users-box box">Users</div>
+            <div class="production-db-box box"><div>Production Database</div></div>
+            <div class="production-instances-box box">
+              <div class="production-instance-box box">Production</div>
+              <div class="production-instance-box box">Production</div>
+              <div class="production-instance-box box">Production</div>
+              <div class="production-instance-box box">Production</div>
+              <div class="production-instance-box box">Production</div>
+            </div>
+            <div class="development-instance-box box">New Relic Developer Mode</div>
+            <div class="line" style="top:150px;left:170px;width:200px;"></div>
+            <div class="line" style="top:150px;left:590px;width:150px;"></div>
+            <div class="line" style="top:440px;left:170px;width:200px;"></div>
+            <div class="line" style="top:440px;left:590px;width:150px;"></div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Fix</h3>
+        </section>
+
+        <section>
+          <h3>Benchmark</h3>
+          <ul>
+            <li>rails-perftest</li>
+            <li>ab / siege</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>rails-perftest</h3>
+          <pre><code>
+require 'test_helper'
+require 'rails/performance_test_help'
+
+class HomepageTest < ActionDispatch::PerformanceTest
+  # Refer to the documentation for all available options
+  # self.profile_options = { runs: 5,
+  #                          metrics: [:wall_time, :memory],
+  #                          output: 'tmp/performance',
+  #                          formats: [:flat] }
+
+  test "homepage" do
+    get '/'
+  end
+end
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>rails-perftest</h3>
+          <pre><code>
+BrowsingTest#test_homepage (58 ms warmup)
+        process_time: 63 ms
+              memory: 832.13 KB
+             objects: 7,882
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>ab / siege</h3>
+          <div>Monitor with New Relic</div>
+        </section>
+
+        <section>
+          <h3>Summarize</h3>
+          <ul>
+            <li class="fragment">Monitor</li>
+            <li class="fragment">Find out bottleneck</li>
+            <li class="fragment">Reproduce</li>
+            <li class="fragment">Fix</li>
+            <li class="fragment">Benchmark</li>
+            <li class="fragment">Deploy</li>
+            <li class="fragment">Monitor</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>1. As less requests as possible</h2>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>N+1 Query</h3>
+          <pre><code>
+# controller
+@comments = Comment.limit(10)
+
+# view
+<% @comments.each do |comment| %>
+  <%= comment.user.username %> Said: <%= comment.body %>
+<% end %>
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>N+1 Query</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">SELECT  "comments".* FROM "comments" LIMIT 10</div>
+            <div class="fragment">
+              <div class="line" style="top:100px;left:205px;width:550px;font-size:18px;">SELECT  "users".* FROM "users" WHERE "users"."id" = 6 LIMIT 1</div>
+              <div class="line" style="top:200px;left:205px;width:550px;font-size:18px;">SELECT  "users".* FROM "users" WHERE "users"."id" = 64 LIMIT 1</div>
+              <div class="line" style="top:300px;left:205px;width:550px;font-size:18px;">......</div>
+              <div class="line" style="top:400px;left:205px;width:550px;font-size:18px;">SELECT  "users".* FROM "users" WHERE "users"."id" = 19 LIMIT 1</div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>N+1 Query</h3>
+          <img src="/img/n-plus-one-queries-before.png"></img>
+          <div style="position:absolute;top:220px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 12.3ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>N+1 Query</h3>
+          <pre><code>
+# controller
+@comments = Comment.includes(:user).limit(10)
+
+# view
+<% @comments.each do |comment| %>
+  <%= comment.user.username %> Said: <%= comment.body %>
+<% end %>
+          </code></pre>
+          <div style="position:absolute;top:140px;left:290px;width:200px;height:40px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>N+1 Query</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">SELECT  "comments".* FROM "comments" LIMIT 10</div>
+            <div class="line fragment" style="top:250px;left:205px;width:550px;font-size:20px;">SELECT "users".* FROM "users" WHERE "users"."id" IN (6, 64, 17, 56, 71, 2, 75, 73, 18, 19)</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>N+1 Query</h3>
+          <img src="/img/n-plus-one-queries-after.png"></img>
+          <div style="position:absolute;top:260px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 6.81ms</p>
+        </section>
+
+        <section>
+          <h3>N+1 Query</h3>
+          <table>
+            <tr><td>12.3ms vs 6.81ms</td><td>-45%</td></tr>
+            <tr><td>3.88ms vs 0.621ms</td><td>-84%</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h3>N+1 Query</h3>
+          <a href="http://github.com/flyerhzm/bullet">flyerhzm/bullet</a>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Counter Cache</h3>
+          <pre><code>
+# controller
+@posts = Post.limit(10)
+
+# view
+<% @posts.each do |post| %>
+  <%= post.title %> has <%= post.comment.size %> comments.
+<% end %>
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Counter Cache</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">SELECT  "posts".* FROM "posts" LIMIT 10</div>
+            <div class="fragment">
+              <div class="line" style="top:100px;left:205px;width:550px;font-size:18px;">SELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 1</div>
+              <div class="line" style="top:200px;left:205px;width:550px;font-size:18px;">SELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 2</div>
+              <div class="line" style="top:300px;left:205px;width:550px;font-size:18px;">......</div>
+              <div class="line" style="top:400px;left:205px;width:550px;font-size:18px;">SELECT COUNT(*) FROM "comments" WHERE "comments"."post_id" = 10</div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Counter Cache</h3>
+          <img src="/img/counter-cache-before.png"></img>
+          <div style="position:absolute;top:220px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <div style="position:absolute;top:350px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 12.3ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Counter Cache</h3>
+          <pre><code>
+# migration
+add_column :posts, :comments_count, :integer
+Post.all.each do |post|
+  Post.reset_counters(post.id, :comments)
+end
+
+# model
+class Comment < ActiveRecord::Base
+  belongs_to :post, counter_cache: true
+end
+          </code></pre>
+          <div style="position:absolute;top:320px;left:290px;width:260px;height:30px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Counter Cache</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:200px;left:205px;width:550px;font-size:20px;">SELECT  "posts".* FROM "posts" LIMIT 10</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Counter Cache</h3>
+          <img src="/img/counter-cache-after.png"></img>
+          <div style="position:absolute;top:310px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 7.04ms</p>
+        </section>
+
+        <section>
+          <h3>Counter Cache</h3>
+          <table>
+            <tr><td>12.3ms vs 7.04ms</td><td>-43%</td></tr>
+            <tr><td>6.434ms vs 0.511ms</td><td>-92%</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h3>Counter Cache</h3>
+          <a href="http://github.com/flyerhzm/bullet">flyerhzm/bullet</a>
+        </section>
+
+        <section>
+          <h4>Bonus</h4>
+          <a href="https://github.com/magnusvk/counter_culture">magnusvk/counter_culture</a>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Group</h3>
+          <pre><code>
+# model
+class Comment
+  belongs_to :post
+  scope :approved, -> { where(approved: true) }
+end
+
+class Post
+  has_many :comments
+  def average_rating
+    comments.approved.average(:rating)
+  end
+end
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Group</h3>
+          <pre><code>
+# controller
+@posts = Post.limit(10)
+
+# view
+<% @posts.each do |post| %>
+  <%= post.title %> average rating is
+  <%= post.average_rating %> stars
+<% end %>
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Group</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">SELECT  "posts".* FROM "posts" LIMIT 10</div>
+            <div class="fragment">
+              <div class="line" style="top:100px;left:205px;width:550px;font-size:18px;">SELECT AVG("comments"."rating") FROM "comments" WHERE "comments"."post_id" = 1 AND "comments"."approved" = "t"</div>
+              <div class="line" style="top:200px;left:205px;width:550px;font-size:18px;">SELECT AVG("comments"."rating") FROM "comments" WHERE "comments"."post_id" = 2 AND "comments"."approved" = "t"</div>
+              <div class="line" style="top:300px;left:205px;width:550px;font-size:18px;">......</div>
+              <div class="line" style="top:400px;left:205px;width:550px;font-size:18px;">SELECT AVG("comments"."rating") FROM "comments" WHERE "comments"."post_id" = 10 AND "comments"."approved" = "t"</div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Group</h3>
+          <img src="/img/use-group-before.png"></img>
+          <div style="position:absolute;top:215px;left:630px;width:310px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 17.4ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Group</h3>
+          <pre><code>
+# Gemfile
+gem 'eager_group'
+
+# model
+class Post < ActiveRecord::Base
+  has_many :comments
+  define_eager_group :average_rating, :comments, :average, :rating,
+-> { approved }
+end
+
+# controller
+@posts = Post.eager_group(:average_rating).limit(10)
+          </code></pre>
+          <div style="position:absolute;top:280px;left:50px;width:860px;height:50px;border:2px solid red;"></div>
+          <div style="position:absolute;top:400px;left:220px;width:360px;height:40px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Group</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">SELECT  "posts".* FROM "posts" LIMIT 10</div>
+            <div class="line fragment" style="top:200px;left:205px;width:550px;font-size:20px;">SELECT AVG("comments"."rating") AS average_rating, post_id AS post_id FROM "comments" WHERE "comments"."approved" = "t" AND "comments"."post_id" IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10) GROUP BY "comments"."post_id"</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Group</h3>
+          <img src="/img/use-group-after.png"></img>
+          <div style="position:absolute;top:215px;left:630px;width:310px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 7.48ms</p>
+        </section>
+
+        <section>
+          <h3>Use Group</h3>
+          <table>
+            <tr><td>17.4ms vs 7.48ms</td><td>-57%</td></tr>
+            <tr><td>6.62ms vs 1.55ms</td><td>-77%</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h3>Use Group</h3>
+          <a href="https://github.com/xinminlabs/eager_group">xinminlabs/eager_group</a>
+        </section>
+
+        <section>
+          <h4>Bonus</h4>
+          <div>Postgresql Materialized View</div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Multi Inserts</h3>
+          <pre><code>
+# controller
+10.times do
+  Post.create title: Faker::Lorem.sentence,
+              body: Faker::Hipster.paragraph,
+              user_id: rand(100) + 1
+end
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Multi Inserts</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">BEGIN</div>
+            <div class="line" style="top:50px;left:205px;width:550px;font-size:20px;">INSERT INTO "posts" ("title", "body", "user_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"</div>
+            <div class="line" style="top:120px;left:205px;width:550px;font-size:18px;">COMMIT</div>
+            <div class="line" style="top:200px;left:205px;width:550px;font-size:18px;">......</div>
+            <div class="line" style="top:300px;left:205px;width:550px;font-size:20px;">BEGIN</div>
+            <div class="line" style="top:350px;left:205px;width:550px;font-size:20px;">INSERT INTO "posts" ("title", "body", "user_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"</div>
+            <div class="line" style="top:420px;left:205px;width:550px;font-size:18px;">COMMIT</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Multi Inserts</h3>
+          <img src="/img/multi-inserts-before.png"></img>
+          <div style="position:absolute;top:210px;left:650px;width:300px;height:90px;border:2px solid red;"></div>
+          <p>Newrelic response time is 35.4ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Multi Inserts</h3>
+          <pre><code>
+# Gemfile
+gem 'activerecord-import'
+
+# controller
+posts = []
+10.times do
+  posts << Post.new(title: Faker::Lorem.sentence,
+                    body: Faker::Hipster.paragraph,
+                    user_id: rand(100) + 1)
+end
+Post.import posts
+          </code></pre>
+          <div style="position:absolute;top:370px;left:50px;width:250px;height:40px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Multi Inserts</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:100px;left:205px;width:550px;font-size:20px;">  Class Create Many Without Validations Or Callbacks (3.6ms)  INSERT INTO "posts" ("id","title","body","user_id") VALUES (nextval('public.posts_id_seq'),'title','body',31),(nextval('public.posts_id_seq'),'title','body',80),(nextval('public.posts_id_seq'),'title','body',73),(nextval('public.posts_id_seq'),'title','body',56),(nextval('public.posts_id_seq'),'title','body',66),(nextval('public.posts_id_seq'),'title','body',19),(nextval('public.posts_id_seq'),'title','body',11),(nextval('public.posts_id_seq'),'title','body',90),(nextval('public.posts_id_seq'),'title','body',90),(nextval('public.posts_id_seq'),'title','body',9) RETURNING id</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Multi Inserts</h3>
+          <img src="/img/multi-inserts-after.png"></img>
+          <div style="position:absolute;top:220px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 11.6ms</p>
+        </section>
+
+        <section>
+          <h3>Multi Inserts</h3>
+          <table>
+            <tr><td>35.4ms vs 11.6ms</td><td>-67%</td></tr>
+            <tr><td>19.39ms vs 2.39ms</td><td>-88%</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h3>Multi Inserts</h3>
+          <a href="https://github.com/zdennis/activerecord-import">zdennis/activerecord-import</a>
+        </section>
+
+        <section>
+          <h3>Multi Updates</h3>
+          <pre><code>
+Post.where("created_at < ?", 10.years.ago).update_all(archive: true)
+          </code></pre>
+          <div style="position:absolute;top:120px;left:580px;width:330px;height:40px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <h3>Multi Deletes</h3>
+          <pre><code>
+Post.where("created_at < ?", 10.years.ago).destroy_all
+
+Post.where("created_at < ?", 10.years.ago).delete_all
+          </code></pre>
+          <div style="position:absolute;top:120px;left:580px;width:160px;height:30px;border:2px solid red;"></div>
+          <div style="position:absolute;top:170px;left:580px;width:160px;height:30px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <h2>2. As small payloads as possible</h2>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Select Data You Really Need</h3>
+          <pre><code>
+# controller
+@posts = Post.limit(10)
+
+# view
+<% @posts.each do |post| %>
+  <%= post.title %>
+<% end %>
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Select Data You Really Need</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:200px;left:205px;width:550px;font-size:20px;">SELECT  "posts".* FROM "posts" LIMIT 10</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Select Data You Really Need</h3>
+          <img src="/img/select-data-you-really-need-before.png"></img>
+          <div style="position:absolute;top:300px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 4.86ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Select Data You Really Need</h3>
+          <pre><code>
+# controller
+@posts = Post.select('title').limit(10)
+          </code></pre>
+          <div style="position:absolute;top:145px;left:220px;width:200px;height:40px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Select Data You Really Need</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:200px;left:205px;width:550px;font-size:20px;">SELECT  "posts"."title" FROM "posts" LIMIT 10</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Select Data You Really Need</h3>
+          <img src="/img/select-data-you-really-need-after.png"></img>
+          <div style="position:absolute;top:310px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 4.54ms</p>
+        </section>
+
+        <section>
+          <h3>Select Data You Really Need</h3>
+          <table>
+            <tr><td>4.86ms vs 4.54ms</td><td>-7%</td></tr>
+            <tr><td>0.563ms vs 0.421ms</td><td>-25%</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>3. As fast resources as possible</h2>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Cache</h3>
+          <pre><code>
+# controller
+@posts = Post.limit(10)
+
+# view
+<% @posts.each do |post| %>
+  <%= post.user.username %> said <%= post.title %>
+<% end %>
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Cache</h3>
+          <div class="chart">
+            <div class="client-box box">App Server</div>
+            <div class="server-box box">DB Server</div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">SELECT  "posts".* FROM "posts" LIMIT 10</div>
+            <div class="line" style="top:100px;left:205px;width:550px;font-size:18px;">SELECT  "users".* FROM "users" WHERE "users"."id" = 50</div>
+            <div class="line" style="top:200px;left:205px;width:550px;font-size:18px;">SELECT  "users".* FROM "users" WHERE "users"."id" = 97</div>
+            <div class="line" style="top:300px;left:205px;width:550px;font-size:18px;">......</div>
+            <div class="line" style="top:400px;left:205px;width:550px;font-size:18px;">SELECT  "users".* FROM "users" WHERE "users"."id" = 9</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Cache</h3>
+          <img src="/img/use-cache-before.png"></img>
+          <div style="position:absolute;top:180px;left:620px;width:320px;height:80px;border:2px solid red;"></div>
+          <p>Newrelic response time is 12.2ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Cache</h3>
+          <pre><code>
+# Gemfile
+gem 'dalli'
+
+# config/application.rb
+config.cache_store = :mem_cache_store
+
+# view
+<% @posts.each do |post| %>
+  <% cache post do %>
+    <%= post.user.username %> said <%= post.title %>
+  <% end %>
+<% end %>
+          </code></pre>
+          <div style="position:absolute;top:320px;left:70px;width:650px;height:80px;border:2px solid red;"></div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Cache</h3>
+          <div class="chart">
+            <div class="app-servers-box box">App Servers</div>
+            <div class="db-box box"><div>Database</div></div>
+            <div class="memcached-box box"><div>Memcached</div></div>
+            <div class="line" style="top:0px;left:205px;width:550px;font-size:20px;">SELECT  "posts".* FROM "posts" LIMIT 10</div>
+            <div class="line" style="top:100px;left:210px;width:190px;font-size:18px;">Post #50 Cache Page</div>
+            <div class="line" style="top:200px;left:210px;width:190px;font-size:18px;">Post #97 Cache Page</div>
+            <div class="line" style="top:300px;left:210px;width:190px;font-size:18px;">......</div>
+            <div class="line" style="top:400px;left:210px;width:190px;font-size:18px;">Post #9 Cache Page</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Cache</h3>
+          <img src="/img/use-cache-after.png"></img>
+          <div style="position:absolute;top:180px;left:640px;width:300px;height:80px;border:2px solid red;"></div>
+          <p>Newrelic response time is 9.97ms</p>
+        </section>
+
+        <section>
+          <h3>Use Cache</h3>
+          <table>
+            <tr><td>12.2ms vs 9.97ms</td><td>-18%</td></tr>
+            <tr><td>8.11ms vs 5.79ms</td><td>-29%</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h5>Bonus</h5>
+          <pre><code>Rails.cache.read_multi</code></pre>
+          <a href="https://github.com/n8/multi_fetch_fragments">https://github.com/n8/multi_fetch_fragments</a>
+          <a href="https://github.com/hooopo/second_level_cache">https://github.com/hooopo/second_level_cache</a>
+        </section>
+
+        <section>
+          <h3>Use ElasticSearch for search</h3>
+        </section>
+
+        <section>
+          <h3>Use Redis</h3>
+        </section>
+
+        <section>
+          <h3>Use SSD</h3>
+        </section>
+
+        <section>
+          <h2>4. Other</h2>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Index</h3>
+          <pre><code>
+# controller
+@posts = Post.order('created_at desc').limit(10)
+
+# view
+<% @posts.each do |post| %>
+  <%= post.title %>
+<% end %>
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Index</h3>
+          <pre><code>
+SELECT  "posts".* FROM "posts"  ORDER BY created_at desc LIMIT 10
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Use Index</h3>
+          <img src="/img/use-index-before.png"></img>
+          <div style="position:absolute;top:170px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 21.5ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Index</h3>
+          <pre><code>
+# migration
+def change
+  add_index :posts, :created_at
+end
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Use Index</h3>
+          <img src="/img/use-index-after.png"></img>
+          <div style="position:absolute;top:300px;left:650px;width:300px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 4.95ms</p>
+        </section>
+
+        <section>
+          <h3>Use Index</h3>
+          <table>
+            <tr><td>21.5ms vs 4.95ms</td><td>-77%</td></tr>
+            <tr><td>17.3ms vs 0.595ms</td><td>-97%</td></tr>
+          </table>
+        </section>
+
+
+        <section>
+          <h3>Use Index</h3>
+          <a href="https://github.com/plentz/lol_dba">plentz/lol_dba</a>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Optimize JSON Rendering</h3>
+          <pre><code>
+# controller
+@posts = Post.limit(10)
+render json: @posts
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label before">
+              <span>Before</span>
+            </div>
+          </div>
+          <h3>Optimize JSON Rendering</h3>
+          <img src="/img/optimize-json-rendering-before.png"></img>
+          <div style="position:absolute;top:170px;left:630px;width:310px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 6.28ms</p>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Optimize JSON Rendering</h3>
+          <pre><code>
+# Gemfile
+gem 'oj'
+gem 'oj_mimic_json'
+          </code></pre>
+        </section>
+
+        <section>
+          <div class="wrapper">
+            <div class="label after">
+              <span>After</span>
+            </div>
+          </div>
+          <h3>Optimize JSON Rendering</h3>
+          <img src="/img/optimize-json-rendering-after.png"></img>
+          <div style="position:absolute;top:170px;left:630px;width:310px;height:40px;border:2px solid red;"></div>
+          <p>Newrelic response time is 5.76ms</p>
+        </section>
+
+        <section>
+          <h3>Optimize JSON Rendering</h3>
+          <table>
+            <tr><td>6.28ms vs 5.76ms</td><td>-8%</td></tr>
+            <tr><td>3.92ms vs 3.28ms</td><td>-16%</td></tr>
+          </table>
+        </section>
+
+        <section>
+          <h3>Optimize JSON Rendering</h3>
+          <a href="https://github.com/ohler55/oj">ohler55/oj</a>
+        </section>
+
+        <section>
+          <h3>Memory Optimize</h3>
+        </section>
+
+        <section>
+          <img src="/img/memory-optimize1.png"></img>
+          <a href="https://github.com/rails/rails/pull/20946">https://github.com/rails/rails/pull/20946</a>
+          <p>shave off 1,114 string objects on every request</p>
+        </section>
+
+        <section>
+          <img src="/img/memory-optimize2.png"></img>
+          <a href="https://github.com/rails/rails/pull/21057">https://github.com/rails/rails/pull/21057</a>
+          <p>shave off 34,299 objects on every request</p>
+        </section>
+
+        <section>
+          <h3>Find in batch</h3>
+          <pre><code>
+Person.where("age > 21").each do |person|
+  person.party_all_night!
+end
+          </code></pre>
+          <div style="transform: rotate(90deg);">=></div>
+          <pre><code>
+Person.where("age > 21").find_each do |person|
+  person.party_all_night!
+end
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Find in batch</h3>
+          <ul>
+            <li>Send multiple sql requests</li>
+            <li>But reduce memory usage</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>No tip is always true</h2>
+        </section>
+
+        <section>
+          <h2>Review</h2>
+          <ul>
+            <li>Frontend performance tuning does first</li>
+            <li>Backend performance tuning is important</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Review</h2>
+          <ul>
+            <li>As less requests as possible</li>
+            <li>As small payloads as possible</li>
+            <li>As fast resources as possible</li>
+            <li>Other</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Review</h2>
+          <ul>
+            <li>Monitor</li>
+            <li>Find out bottleneck</li>
+            <li>Reproduce</li>
+            <li>Fix</li>
+            <li>Benchmark</li>
+            <li>Deploy</li>
+            <li>Monitor</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Demos Code</h2>
+          <a href="https://github.com/xinminlabs/rails-performance-tips-code">https://github.com/xinminlabs/rails-performance-tips-code</a>
+        </section>
+
+				<section>
+					<h2>Thank You</h2>
+          <p><a href="http://huangzhimin.com">Richard Huang</a></p>
+          <p><a href="https://github.com/flyerhzm">@flyerhzm</a></p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+        keyboard: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
